@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>霓虹深渊：无限 - 攻略 & Bug收录</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700;900&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --neon-pink: #ff2d95;
+  --neon-blue: #00f0ff;
+  --neon-purple: #b026ff;
+  --neon-green: #39ff14;
+  --neon-yellow: #ffe600;
+  --neon-orange: #ff6b00;
+  --bg-dark: #0a0a1a;
+  --bg-card: rgba(15, 15, 35, 0.9);
+  --text: #e0e0f0;
+  --text-dim: #8888aa;
+}
+
+body {
+  font-family: 'Noto Sans SC', sans-serif;
+  background: var(--bg-dark);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===== 动态粒子背景 ===== */
+#particles {
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
+}
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: floatParticle 8s ease-in-out infinite;
+}
+.particle.pink { background: var(--neon-pink); box-shadow: 0 0 10px var(--neon-pink); }
+.particle.blue { background: var(--neon-blue); box-shadow: 0 0 10px var(--neon-blue); }
+.particle.purple { background: var(--neon-purple); box-shadow: 0 0 10px var(--neon-purple); }
+.particle.green { background: var(--neon-green); box-shadow: 0 0 10px var(--neon-green); }
+@keyframes floatParticle {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
+  50% { transform: translateY(-30px) scale(1.2); opacity: 1; }
+}
+
+/* ===== 网格背景 ===== */
+.grid-bg {
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(0,240,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,240,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+
+/* ===== 扫描线 ===== */
+.scanlines {
+  position: fixed; inset: 0; z-index: 1;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px
+  );
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+/* ===== 顶部Banner ===== */
+.hero-banner {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  overflow: hidden;
+  z-index: 2;
+}
+.hero-banner img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: brightness(0.6) saturate(1.4);
+}
+.hero-banner .overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10,10,26,0.2) 0%,
+    rgba(10,10,26,0.8) 60%,
+    var(--bg-dark) 100%
+  );
+}
+.hero-banner .title {
+  position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+  text-align: center;
+  width: 90%;
+}
+.hero-banner h1 {
+  font-size: 3rem; font-weight: 900;
+  background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple), var(--neon-blue));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(176,38,255,0.5));
+  animation: glowText 3s ease-in-out infinite;
+}
+.hero-banner .subtitle {
+  font-size: 1.1rem; color: var(--neon-blue);
+  margin-top: 8px; letter-spacing: 4px;
+  text-shadow: 0 0 10px var(--neon-blue);
+}
+@keyframes glowText {
+  0%, 100% { filter: drop-shadow(0 0 20px rgba(176,38,255,0.5)); }
+  50% { filter: drop-shadow(0 0 40px rgba(0,240,255,0.8)); }
+}
+
+/* ===== 容器 ===== */
+.container {
+  max-width: 1100px; margin: 0 auto;
+  padding: 30px 20px 80px;
+  position: relative; z-index: 2;
+}
+
+/* ===== 导航 ===== */
+.nav-tabs {
+  display: flex; gap: 8px; margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+.nav-tab {
+  padding: 10px 22px;
+  background: var(--bg-card);
+  border: 1px solid rgba(0,240,255,0.2);
+  border-radius: 30px;
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+.nav-tab:hover, .nav-tab.active {
+  border-color: var(--neon-blue);
+  color: var(--neon-blue);
+  box-shadow: 0 0 15px rgba(0,240,255,0.3), inset 0 0 15px rgba(0,240,255,0.05);
+  text-shadow: 0 0 10px var(--neon-blue);
+}
+
+/* ===== 通用标题 ===== */
+h2 {
+  font-size: 1.5rem; font-weight: 700;
+  color: var(--neon-blue);
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-left: 4px solid var(--neon-blue);
+  padding-left: 15px;
+  text-shadow: 0 0 10px rgba(0,240,255,0.5);
+  display: flex; align-items: center; gap: 10px;
+}
+h2 .icon { font-size: 1.3rem; }
+
+/* ===== 卡片 ===== */
+.card {
+  background: var(--bg-card);
+  border: 1px solid rgba(176,38,255,0.15);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.6s ease both;
+}
+.card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--neon-purple), var(--neon-blue));
+  opacity: 0.8;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== 霓虹发光按钮 ===== */
+.neon-btn {
+  display: inline-block;
+  padding: 12px 28px;
+  background: transparent;
+  border: 2px solid var(--neon-pink);
+  color: var(--neon-pink);
+  font-weight: 700; font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s;
+  box-shadow: 0 0 10px rgba(255,45,149,0.3),
+              inset 0 0 10px rgba(255,45,149,0.05);
+  text-shadow: 0 0 10px var(--neon-pink);
+  margin-top: 10px;
+}
+.neon-btn:hover {
+  background: var(--neon-pink);
+  color: #000;
+  box-shadow: 0 0 30px rgba(255,45,149,0.6);
+  text-shadow: none;
+}
+
+/* ===== 步骤列表 ===== */
+.step-list { list-style: none; counter-reset: step; }
+.step-list li {
+  counter-increment: step;
+  padding: 12px 16px 12px 55px;
+  margin-bottom: 10px;
+  background: rgba(176,38,255,0.05);
+  border-left: 3px solid var(--neon-purple);
+  border-radius: 0 8px 8px 0;
+  position: relative;
+  transition: all 0.3s;
+}
+.step-list li:hover {
+  background: rgba(176,38,255,0.12);
+  transform: translateX(5px);
+}
+.step-list li::before {
+  content: counter(step);
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  width: 28px; height: 28px;
+  background: var(--neon-purple);
+  color: #fff; font-weight: 700; font-size: 0.85rem;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 10px var(--neon-purple);
+}
+
+/* ===== 资源网格 ===== */
+.resource-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+}
+.resource-item {
+  background: rgba(0,240,255,0.05);
+  border: 1px solid rgba(0,240,255,0.15);
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+  transition: all 0.3s;
+}
+.resource-item:hover {
+  border-color: var(--neon-blue);
+  box-shadow: 0 0 20px rgba(0,240,255,0.2);
+  transform: translateY(-3px);
+}
+.resource-item .emoji { font-size: 2rem; margin-bottom: 6px; }
+.resource-item .name { font-size: 0.9rem; color: var(--neon-blue); font-weight: 600; }
+.resource-item .desc { font-size: 0.78rem; color: var(--text-dim); margin-top: 4px; }
+
+/* ===== 角色卡片 ===== */
+.character-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+.char-card {
+  background: rgba(255,45,149,0.05);
+  border: 1px solid rgba(255,45,149,0.2);
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.char-card::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,45,149,0.1), transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.char-card:hover {
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 25px rgba(255,45,149,0.3);
+  transform: scale(1.02);
+}
+.char-card:hover::after { opacity: 1; }
+.char-card .char-name {
+  font-size: 1.2rem; font-weight: 700;
+  color: var(--neon-pink);
+  text-shadow: 0 0 8px rgba(255,45,149,0.5);
+  margin-bottom: 6px;
+}
+.char-card .char-role { font-size: 0.82rem; color: var(--neon-yellow); margin-bottom: 10px; }
+.char-card .char-desc { font-size: 0.8rem; color: var(--text-dim); line-height: 1.5; }
+
+/* ===== 角色图片 ===== */
+.char-portrait {
+  width: 100%; height: 160px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 14px;
+  border: 2px solid rgba(176,38,255,0.3);
+  transition: all 0.3s;
+  background: var(--bg-dark);
+}
+.char-card:hover .char-portrait {
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 20px rgba(255,45,149,0.4);
+}
+
+/* ===== Bug 列表 ===== */
+.bug-item {
+  display: flex; gap: 14px;
+  padding: 14px;
+  background: rgba(57,255,20,0.03);
+  border: 1px solid rgba(57,255,20,0.1);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  transition: all 0.3s;
+}
+.bug-item:hover {
+  background: rgba(57,255,20,0.06);
+  transform: translateX(5px);
+}
+.bug-item.warning {
+  border-color: rgba(255,230,0,0.3);
+  background: rgba(255,230,0,0.03);
+}
+.bug-item.critical {
+  border-color: rgba(255,45,149,0.3);
+  background: rgba(255,45,149,0.03);
+}
+.bug-severity {
+  font-size: 1.4rem; flex-shrink: 0;
+  width: 36px; text-align: center;
+}
+.bug-info .bug-title {
+  font-weight: 600; margin-bottom: 4px;
+  color: var(--text);
+}
+.bug-info .bug-desc { font-size: 0.82rem; color: var(--text-dim); }
+
+/* ===== 图片画廊 ===== */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+.gallery-item {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 2px solid rgba(176,38,255,0.2);
+  transition: all 0.3s;
+}
+.gallery-item:hover {
+  border-color: var(--neon-purple);
+  box-shadow: 0 0 30px rgba(176,38,255,0.4);
+  transform: scale(1.02);
+}
+.gallery-item img {
+  width: 100%; height: 200px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s;
+}
+.gallery-item:hover img { transform: scale(1.08); }
+.gallery-item .caption {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 12px;
+  background: linear-gradient(transparent, rgba(10,10,26,0.95));
+  font-size: 0.88rem;
+  color: var(--neon-blue);
+  text-align: center;
+  text-shadow: 0 0 8px rgba(0,240,255,0.5);
+}
+
+/* ===== 武器展示 ===== */
+.weapon-showcase {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 2px solid rgba(255,107,0,0.3);
+  margin-bottom: 20px;
+}
+.weapon-showcase img {
+  width: 100%; height: 220px;
+  object-fit: cover;
+  display: block;
+}
+.weapon-showcase .label {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(10,10,26,0.6);
+  font-size: 1.2rem; font-weight: 700;
+  color: var(--neon-orange);
+  text-shadow: 0 0 15px var(--neon-orange);
+}
+
+/* ===== 每日资源 ===== */
+.daily-resource {
+  display: flex; align-items: center; gap: 16px;
+  padding: 16px;
+  background: rgba(57,255,20,0.04);
+  border: 1px solid rgba(57,255,20,0.15);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  transition: all 0.3s;
+}
+.daily-resource:hover {
+  background: rgba(57,255,20,0.08);
+  border-color: var(--neon-green);
+  box-shadow: 0 0 15px rgba(57,255,20,0.2);
+}
+.daily-resource .dr-emoji { font-size: 2rem; flex-shrink: 0; }
+.daily-resource .dr-title { font-weight: 600; color: var(--neon-green); margin-bottom: 4px; }
+.daily-resource .dr-desc { font-size: 0.82rem; color: var(--text-dim); }
+
+/* ===== 流派卡片 ===== */
+.build-card {
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 14px;
+  border-left: 3px solid;
+}
+.build-card.blue { background: rgba(0,240,255,0.05); border-color: var(--neon-blue); }
+.build-card.pink { background: rgba(255,45,149,0.05); border-color: var(--neon-pink); }
+.build-card.purple { background: rgba(176,38,255,0.05); border-color: var(--neon-purple); }
+.build-card .build-title { font-weight: 700; margin-bottom: 8px; }
+.build-card .build-title.blue { color: var(--neon-blue); }
+.build-card .build-title.pink { color: var(--neon-pink); }
+.build-card .build-title.purple { color: var(--neon-purple); }
+.build-card .build-text { font-size: 0.85rem; color: var(--text-dim); line-height: 1.6; }
+
+/* ===== 套装卡片 ===== */
+.set-card {
+  background: rgba(176,38,255,0.08);
+  border: 1px solid rgba(176,38,255,0.2);
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 14px;
+}
+.set-card .set-title { color: var(--neon-purple); font-weight: 700; margin-bottom: 10px; }
+.set-card .set-text { font-size: 0.82rem; color: var(--text-dim); line-height: 1.7; }
+.set-card .warning { color: var(--neon-yellow); font-size: 0.8rem; }
+
+/* ===== 底部 ===== */
+.footer {
+  text-align: center; padding: 30px 0;
+  color: var(--text-dim); font-size: 0.82rem;
+  border-top: 1px solid rgba(0,240,255,0.1);
+  margin-top: 50px;
+}
+.footer a { color: var(--neon-blue); text-decoration: none; }
+
+/* ===== 分区块件 ===== */
+.section-block { margin-bottom: 40px; }
+
+/* ===== 隐藏 ===== */
+.hidden { display: none !important; }
+
+/* ===== 响应式 ===== */
+@media (max-width: 768px) {
+  .hero-banner { height: 280px; }
+  .hero-banner h1 { font-size: 1.8rem; }
+  .character-grid { grid-template-columns: 1fr 1fr; }
+  .gallery-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- 粒子背景 -->
+<div id="particles"></div>
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+
+<!-- 顶部大图Banner -->
+<div class="hero-banner">
+  <img src="banner.png" alt="霓虹深渊">
+  <div class="overlay"></div>
+  <div class="title">
+    <h1>霓虹深渊：无限</h1>
+    <div class="subtitle">攻略指南 · Bug收录 · 霓虹美学</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 导航 -->
+  <div class="nav-tabs">
+    <a class="nav-tab active" data-section="guide" onclick="showSection('guide')">📖 新手入门</a>
+    <a class="nav-tab" data-section="resource" onclick="showSection('resource')">💎 资源系统</a>
+    <a class="nav-tab" data-section="characters" onclick="showSection('characters')">👤 角色推荐</a>
+    <a class="nav-tab" data-section="builds" onclick="showSection('builds')">⚔️ 通关流派</a>
+    <a class="nav-tab" data-section="bugs" onclick="showSection('bugs')">🐛 Bug收录</a>
+    <a class="nav-tab" data-section="gallery" onclick="showSection('gallery')">🖼️ 视觉画廊</a>
+  </div>
+
+  <!-- ========== 新手入门 ========== -->
+  <div id="guide" class="section-block">
+    <div class="card">
+      <h2><span class="icon">🕹️</span> 新手入门流程</h2>
+      <ol class="step-list">
+        <li>进入游戏后优先完成新手教程，了解基本移动、射击、技能释放</li>
+        <li>第一张地图「工业区」优先收集水晶和钥匙，积累初始资源</li>
+        <li>每关结束后必做的事：升级纪念品台 → 补充血量 → 检查商店装备</li>
+        <li>熟悉「愤怒值」系统：受伤积累愤怒 → 释放大招 → 击杀回血循环</li>
+        <li>解锁「宠物跟随」功能，完成每日任务积累付费货币</li>
+      </ol>
+      <a href="#" class="neon-btn" onclick="showSection('resource');return false;">了解资源系统 →</a>
+    </div>
+
+    <div class="card">
+      <h2><span class="icon">📊</span> 基础资源一览</h2>
+      <div class="resource-grid">
+        <div class="resource-item">
+          <div class="emoji">❤️</div>
+          <div class="name">生命值</div>
+          <div class="desc">决定存活回合数</div>
+        </div>
+        <div class="resource-item">
+          <div class="emoji">💎</div>
+          <div class="name">水晶</div>
+          <div class="desc">主要升级货币</div>
+        </div>
+        <div class="resource-item">
+          <div class="emoji">💣</div>
+          <div class="name">手雷</div>
+          <div class="desc">范围伤害清怪</div>
+        </div>
+        <div class="resource-item">
+          <div class="emoji">🔑</div>
+          <div class="name">钥匙</div>
+          <div class="desc">开宝箱/特殊门</div>
+        </div>
+        <div class="resource-item">
+          <div class="emoji">⚡</div>
+          <div class="name">愤怒值</div>
+          <div class="desc">受伤累积→大招</div>
+        </div>
+        <div class="resource-item">
+          <div class="emoji">🧠</div>
+          <div class="name">智慧值</div>
+          <div class="desc">影响技能效果</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="icon">🔫</span> 武器装备展示</h2>
+      <div class="weapon-showcase">
+        <img src="weapon-showcase.png" alt="武器展示">
+        <div class="label">⚔️ 霓虹深渊 · 武器军火库</div>
+      </div>
+      <p style="color:var(--text-dim);font-size:0.85rem;margin-top:10px;">游戏中拥有数十种武器，从等离子步枪到能量剑，每把都有独特的攻击模式和特效组合。</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="icon">🎁</span> 每日免费资源获取</h2>
+      <div class="daily-resource">
+        <div class="dr-emoji">📱</div>
+        <div>
+          <div class="dr-title">手机签到</div>
+          <div class="dr-desc">每日签到领取水晶、钥匙、随机装备</div>
+        </div>
+      </div>
+      <div class="daily-resource">
+        <div class="dr-emoji">🤝</div>
+        <div>
+          <div class="dr-title">分享奖励</div>
+          <div class="dr-desc">每日分享副本链接至社交平台，获取额外水晶</div>
+        </div>
+      </div>
+      <div class="daily-resource">
+        <div class="dr-emoji">🎮</div>
+        <div>
+          <div class="dr-title">限免关卡</div>
+          <div class="dr-desc">每日开放特定关卡，通关获得稀有纪念品碎片</div>
+        </div>
+      </div>
+      <div class="daily-resource">
+        <div class="dr-emoji">🏆</div>
+        <div>
+          <div class="dr-title">竞技场挑战</div>
+          <div class="dr-desc">每日3次挑战机会，排名奖励周末结算发放</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 角色推荐 ========== -->
+  <div id="characters" class="section-block hidden">
+    <div class="card">
+      <h2><span class="icon">👤</span> 角色推荐榜</h2>
+      <div class="character-grid">
+        <div class="char-card">
+          <img class="char-portrait" src="char-r6.png" alt="R6">
+          <div class="char-name">R6</div>
+          <div class="char-role">推荐指数：⭐⭐⭐⭐⭐</div>
+          <div class="char-desc">机动性最强，适合新手跑图。技能「临时武装」可额外携带两把武器，火力覆盖全面。</div>
+        </div>
+        <div class="char-card">
+          <img class="char-portrait" src="char-evelyn.png" alt="伊芙琳">
+          <div class="char-name">伊芙琳</div>
+          <div class="char-role">推荐指数：⭐⭐⭐⭐</div>
+          <div class="char-desc">治疗系核心，技能「能量链接」可为全队回血。后期副本必备角色，组队时价值翻倍。</div>
+        </div>
+        <div class="char-card">
+          <img class="char-portrait" src="char-maple.png" alt="红叶">
+          <div class="char-name">红叶</div>
+          <div class="char-role">推荐指数：⭐⭐⭐⭐</div>
+          <div class="char-desc">爆发型角色，大招「秋风落叶」可在3秒内倾泻大量伤害。Boss战利器，缺点是生存能力偏弱。</div>
+        </div>
+        <div class="char-card">
+          <img class="char-portrait" src="char-anonymous.png" alt="匿名特工">
+          <div class="char-name">匿名特工</div>
+          <div class="char-role">推荐指数：⭐⭐⭐⭐</div>
+          <div class="char-desc">全能型角色，技能「数据伪装」可免疫陷阱伤害。高难度副本泛用性强，稳定通关首选。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 通关流派 ========== -->
+  <div id="builds" class="section-block hidden">
+    <div class="card">
+      <h2><span class="icon">⚔️</span> 核心通关流派</h2>
+      
+      <div class="build-card blue">
+        <div class="build-title blue">🚀 流派一：飞行压制流</div>
+        <img src="underground-abyss.png" alt="飞行压制" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px;margin-bottom:12px;">
+        <div class="build-text">
+          <strong>核心装备：</strong>「浮空靴」+「等离子披风」<br>
+          <strong>打法：</strong>全程保持浮空状态，优先击杀远程敌人。近战怪无法有效命中，配合高射速武器实现压制。<br>
+          <strong>适合：</strong>操作自信、喜欢秀走位的玩家
+        </div>
+      </div>
+
+      <div class="build-card pink">
+        <div class="build-title pink">💀 流派二：复活续航流</div>
+        <img src="boss-fight.png" alt="Boss战续航" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px;margin-bottom:12px;">
+        <div class="build-text">
+          <strong>核心装备：</strong>「重生十字」+「亡魂头盔」<br>
+          <strong>打法：</strong>放弃防御堆叠伤害，死了还能复活2次。通过高频死亡触发「愤怒觉醒」状态，大幅提升攻击力。<br>
+          <strong>适合：</strong>喜欢莽、追求一击必杀的玩家
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="icon">🏆</span> 纪念品搭配</h2>
+      <div class="weapon-showcase">
+        <img src="item-room.png" alt="纪念品宝物室">
+        <div class="label">💎 纪念品宝物室</div>
+      </div>
+      <p style="color:var(--text-dim);margin-bottom:15px;font-size:0.88rem;margin-top:10px;">当前版本强势套装推荐（2024年4月）：</p>
+      
+      <div class="set-card">
+        <div class="set-title">👊 拳套流（6号位套装）</div>
+        <div class="set-text">
+          「铁拳手套」+「暴击增幅器」+「连击计数器」+「能量饮料」<br>
+          核心思路：堆叠暴击率和攻击速度，拳套攻速最高，配合暴击装备实现秒伤突破。
+        </div>
+      </div>
+
+      <div class="set-card">
+        <div class="set-title">💰 无限金币循环</div>
+        <div class="set-text">
+          利用商店「退钱BUG」：购买装备后立即丢弃，可保留装备并退款。再购买再退款，无限刷水晶。<br>
+          <span class="warning">⚠️ 已被修复，谨慎使用</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== Bug收录 ========== -->
+  <div id="bugs" class="section-block hidden">
+    <div class="card">
+      <h2><span class="icon">🐛</span> 已知Bug收录</h2>
+      
+      <div class="bug-item critical">
+        <div class="bug-severity">🔴</div>
+        <div class="bug-info">
+          <div class="bug-title">卡地图死循环</div>
+          <div class="bug-desc">在「废弃工厂」关卡特定位置，卡进通风管道后无法脱身，只能强制退出重开。严重影响副本进度。</div>
+        </div>
+      </div>
+      
+      <div class="bug-item critical">
+        <div class="bug-severity">🔴</div>
+        <div class="bug-info">
+          <div class="bug-title">技能冷却重置异常</div>
+          <div class="bug-desc">使用「时间减速」技能后，如果在此期间击杀Boss，技能冷却不生效，可无限使用。破坏游戏平衡性。</div>
+        </div>
+      </div>
+      
+      <div class="bug-item warning">
+        <div class="bug-severity">🟡</div>
+        <div class="bug-info">
+          <div class="bug-title">帧数下降卡顿</div>
+          <div class="bug-desc">在「霓虹都市」后期波次，敌人数量超过30个时，部分设备会出现明显掉帧。手机设备尤为严重。</div>
+        </div>
+      </div>
+      
+      <div class="bug-item warning">
+        <div class="bug-severity">🟡</div>
+        <div class="bug-info">
+          <div class="bug-title">道具图标重叠</div>
+          <div class="bug-desc">背包满时拾取新道具，图标会与已存在道具重叠。点击重叠区域可能触发异常操作。</div>
+        </div>
+      </div>
+      
+      <div class="bug-item">
+        <div class="bug-severity">🟢</div        <div class="bug-info">
+          <div class="bug-title">音频残留</div>
+          <div class="bug-desc">切换角色后，前一个角色的技能音效会短暂残留1-2秒。不影响实际游戏体验。</div>
+        </div>
+      </div>
+      
+      <div style="margin-top:20px;padding:14px;background:rgba(255,107,0,0.05);border:1px solid rgba(255,107,0,0.15);border-radius:10px;">
+        <div style="color:var(--neon-orange);font-weight:600;margin-bottom:6px;">📅 历史已修复</div>
+        <div style="font-size:0.8rem;color:var(--text-dim);">
+          • v2.3.1 — 无限刷金币BUG（已修复）<br>
+          • v2.2.8 — 穿墙Bug（已修复）<br>
+          • v2.2.5 — 存档丢失Bug（已修复）
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 视觉画廊 ========== -->
+  <div id="gallery" class="section-block hidden">
+    <div class="card">
+      <h2><span class="icon">🖼️</span> 视觉画廊</h2>
+      <p style="color:var(--text-dim);margin-bottom:20px;font-size:0.88rem;">AI生成的赛博朋克风格图片，致敬游戏霓虹美学</p>
+      
+      <div class="gallery-grid">
+        <div class="gallery-item">
+          <img src="banner.png" alt="霓虹深渊">
+          <div class="caption">🌆 霓虹城市 · 渊之入口</div>
+        </div>
+        <div class="gallery-item">
+          <img src="city-night.png" alt="霓虹都市夜景">
+          <div class="caption">🌃 雨夜霓虹街道</div>
+        </div>
+        <div class="gallery-item">
+          <img src="underground-abyss.png" alt="地下深渊">
+          <div class="caption">🕳️ 深渊之下</div>
+        </div>
+        <div class="gallery-item">
+          <img src="boss-fight.png" alt="Boss战">
+          <div class="caption">👹 深渊Boss战</div>
+        </div>
+        <div class="gallery-item">
+          <img src="weapon-showcase.png" alt="武器展示">
+          <div class="caption">🔫 武器军火库</div>
+        </div>
+        <div class="gallery-item">
+          <img src="item-room.png" alt="宝物房间">
+          <div class="caption">💎 纪念品宝物室</div>
+        </div>
+        <div class="gallery-item">
+          <img src="char-r6.png" alt="R6角色">
+          <div class="caption">👤 R6 · 赛博战士</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部 -->
+  <div class="footer">
+    <p>霓虹深渊：无限 · 攻略指南</p>
+    <p style="margin-top:8px;">AI生成内容 · 仅供参考娱乐</p>
+  </div>
+
+</div>
+
+<!-- JS导航 -->
+<script>
+function showSection(name) {
+  document.querySelectorAll('.section-block').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+  var target = document.getElementById(name);
+  if (target) {
+    target.classList.remove('hidden');
+    target.scrollIntoView({behavior: 'smooth', block: 'start'});
+  }
+  var tabs = document.querySelectorAll('.nav-tab');
+  tabs.forEach(function(t) {
+    if (t.getAttribute('data-section') === name) t.classList.add('active');
+  });
+}
+
+// 初始化
+document.querySelectorAll('.nav-tab').forEach(function(tab) {
+  tab.addEventListener('click', function(e) {
+    e.preventDefault();
+    var section = this.getAttribute('data-section');
+    showSection(section);
+  });
+});
+
+// 粒子生成
+(function() {
+  var container = document.getElementById('particles');
+  var colors = ['pink','blue','purple','green'];
+  for (var i = 0; i < 30; i++) {
+    var p = document.createElement('div');
+    p.className = 'particle ' + colors[i % colors.length];
+    var size = Math.random() * 6 + 2;
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.top = Math.random() * 100 + '%';
+    p.style.animationDelay = Math.random() * 8 + 's';
+    p.style.animationDuration = (Math.random() * 4 + 6) + 's';
+    container.appendChild(p);
+  }
+})();
+</script>
+
+</body>
+</html>
